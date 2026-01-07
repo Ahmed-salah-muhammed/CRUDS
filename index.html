@@ -4,151 +4,120 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>crud</title>
-    <link rel="stylesheet" href="output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+      * { font-family: 'Poppins', sans-serif; }
+      
+      /* Toast Animations */
+      @keyframes show_toast {
+        0% { transform: translateX(100%); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+      }
+      .animate-show { animation: show_toast 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
+      .animate-hide { transform: translateX(calc(100% + 20px)); opacity: 0; transition: 0.4s ease; }
+
+      /* Progress Bar Animation */
+      @keyframes progress {
+        0% { width: 100%; }
+        100% { width: 0%; }
+      }
+      .toast-progress { 
+        animation: progress 5s linear forwards;
+        transform-origin: left;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #111827; }
+      ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+    </style>
   </head>
-  <body class="bg-gray-900 text-white font-sans">
-    <div class="container w-[80%] mx-auto">
+  <body class="bg-[#0f172a] text-white font-sans min-h-screen">
+    <!-- Toast Container -->
+    <ul id="notifications" class="fixed top-8 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></ul>
+
+    <div class="container w-[90%] md:w-[80%] mx-auto pb-10">
       <header class="text-center uppercase py-8">
-        <h2 class="text-3xl font-bold p-2 mb-1 animate-pulse">crud</h2>
-        <p>product management system</p>
+        <h2 class="text-4xl font-extrabold p-2 mb-1 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 animate-pulse">crud</h2>
+        <p class="text-gray-400 text-sm tracking-widest">product management system</p>
       </header>
-      <main class="inputs">
-        <input
-          type="text"
-          id="title"
-          placeholder="title"
-          class="hover:shadow-2xl hover:shadow-blue-500/10 w-full p-2 m-2 border-2 rounded-xl border-gray-600 focus:bg-gray-800 transition-all duration-500 ease-in-out"
-          required
-        />
-        <div
-          class="w-full m-2 grid grid-cols-2 gap-2 md:grid-cols-5 md:gap-2 md:justify-between items-center"
-        >
-          <input
-            type="number"
-            id="price"
-            placeholder="price"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 p-2 border-2 rounded-xl border-gray-600 focus:bg-gray-800 transition-all duration-500 ease-in-out"
-            onkeyup="getTotal()"
-          />
-          <input
-            type="number"
-            id="taxes"
-            placeholder="taxes"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 p-2 border-2 rounded-xl border-gray-600 focus:bg-gray-800 transition-all duration-500 ease-in-out"
-            onkeyup="getTotal()"
-          />
-          <input
-            type="number"
-            id="ads"
-            placeholder="ads"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 p-2 border-2 rounded-xl border-gray-600 focus:bg-gray-800 transition-all duration-500 ease-in-out"
-            onkeyup="getTotal()"
-          />
-          <input
-            type="number"
-            id="discount"
-            placeholder="discount"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 p-2 border-2 rounded-xl border-gray-600 focus:bg-gray-800 transition-all duration-500 ease-in-out"
-            onkeyup="getTotal()"
-          />
-          <small
-            aria-readonly="true"
-            id="total"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 p-2.5 text-center col-span-2 md:col-span-1 rounded-xl border-2 border-gray-600 bg-red-950 before:content-['Total_price:_'] before:mr-1 before:font-semibold before:text-gray-400 transition-all duration-500 ease-in-out"
-            >L.E</small
-          >
-        </div>
-        <div
-          class="w-full grid grid-cols-2 gap-2 justify-between items-center m-2"
-        >
-          <input
-            type="number"
-            id="count"
-            placeholder="count"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 gap-2 border-2 rounded-xl focus:bg-gray-800 border-gray-600 p-2 px-25x transition-all duration-500 ease-in-out"
-          />
+
+      <main class="inputs bg-[#1e293b] p-6 rounded-2xl shadow-2xl border border-gray-800">
+        <div class="space-y-4">
           <input
             type="text"
-            id="category"
-            placeholder="category"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 gap-2 border-2 rounded-xl focus:bg-gray-800 border-gray-600 p-2 px-25x transition-all duration-500 ease-in-out"
+            id="title"
+            placeholder="Product Title"
+            class="w-full p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none placeholder:text-gray-600"
+            required
           />
+          
+          <div class="grid grid-cols-2 gap-3 md:grid-cols-5 items-center">
+            <input type="number" id="price" placeholder="Price" onkeyup="getTotal()" class="p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 outline-none transition-all placeholder:text-gray-600" />
+            <input type="number" id="taxes" placeholder="Taxes" onkeyup="getTotal()" class="p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 outline-none transition-all placeholder:text-gray-600" />
+            <input type="number" id="ads" placeholder="Ads" onkeyup="getTotal()" class="p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 outline-none transition-all placeholder:text-gray-600" />
+            <input type="number" id="discount" placeholder="Discount" onkeyup="getTotal()" class="p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 outline-none transition-all placeholder:text-gray-600" />
+            <small id="total" class="p-3.5 text-center col-span-2 md:col-span-1 rounded-xl border border-gray-700 bg-red-900/30 text-red-400 font-bold transition-all">L.E</small>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <input type="number" id="count" placeholder="Count" class="p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 outline-none transition-all placeholder:text-gray-600" />
+            <input type="text" id="category" placeholder="Category" class="p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-blue-500 outline-none transition-all placeholder:text-gray-600" />
+          </div>
+
+          <button id="create" class="w-full p-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-900/20 transition-all active:scale-[0.98]">
+            Create Product
+          </button>
         </div>
-        <button
-          id="create"
-          class="hover:shadow-2xl hover:shadow-blue-500/10 w-full p-2 m-2 gap-2 flex-row border-2 focus:bg-gray-800 cursor-pointer rounded-xl border-gray-600 bg-gray-600 hover:bg-gray-800 hover:tracking-wide transition-all duration-500 ease-in-out"
-        >
-          Create Product
-        </button>
       </main>
-      <section class="outputs">
-        <div class="searchBlock">
+
+      <section class="outputs mt-10">
+        <div class="bg-[#1e293b] p-6 rounded-2xl shadow-2xl border border-gray-800">
           <input
             type="text"
             id="Search"
-            placeholder="Search"
-            class="hover:shadow-2xl hover:shadow-blue-500/10 w-full p-2 m-2 border-2 rounded-xl border-gray-600 focus:bg-gray-800 transition-all duration-500 ease-in-out"
+            placeholder="Search Products..."
+            class="w-full p-3 bg-[#0f172a] border border-gray-700 rounded-xl focus:border-emerald-500 outline-none transition-all placeholder:text-gray-600 mb-4"
           />
-          <div
-            class="grid grid-cols-2 gap-2 m-2 justify-between w-full items-center"
-          >
-            <button
-              id="SearchByTitle"
-              class="hover:shadow-2xl hover:shadow-blue-500/10 p-2 gap-2 flex-row border-2 focus:bg-gray-800 cursor-pointer rounded-xl border-gray-600 bg-gray-600 hover:bg-gray-800 hover:tracking-wide transition-all duration-500 ease-in-out"
-            >
-              Search by Title
-            </button>
-            <button
-              id="SearchByCategory"
-              class="hover:shadow-2xl hover:shadow-blue-500/10 p-2 gap-2 flex-row border-2 focus:bg-gray-800 cursor-pointer rounded-xl border-gray-600 bg-gray-600 hover:bg-gray-800 hover:tracking-wide transition-all duration-500 ease-in-out"
-            >
-              Search by Category
-            </button>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="SearchByTitle" class="p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl transition-all">Search by Title</button>
+            <button id="SearchByCategory" class="p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl transition-all">Search by Category</button>
           </div>
         </div>
-        <button
-          class="block hover:shadow-2xl hover:shadow-blue-500/10 w-full p-2 m-2 gap-2 flex-row border-2 focus:bg-gray-800 cursor-pointer rounded-xl border-gray-600 bg-red-950 hover:bg-gray-300 hover:tracking-wide transition-all duration-500 ease-in-out"
-          id="deleteAll"
-        ></button>
-        <div
-          class="w-full m-2 mt-3 text-gray-300 shadow-2xl transition-all duration-500 ease-in-out"
-        >
-          <!-- =================== DESKTOP TABLE =================== -->
-          <div
-            class="hidden md:block overflow-x-auto rounded-xl shadow-lg bg-gray-900"
-          >
-            <table class="min-w-full text-sm text-left">
-              <caption
-                class="p-4 text-lg font-semibold bg-gray-800 text-gray-200"
-              >
-                Products Dashboard
-              </caption>
 
-              <thead class="text-xs uppercase bg-gray-800 text-gray-400">
+        <button id="deleteAll" class="hidden w-full mt-4 p-3 bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-900/50 rounded-xl transition-all font-bold"></button>
+
+        <div class="mt-6 overflow-hidden rounded-2xl border border-gray-800 shadow-2xl">
+          <!-- Desktop Table -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-[#1e293b] text-gray-400 uppercase text-xs border-b border-gray-800">
                 <tr>
-                  <th class="px-4 py-3">ID</th>
-                  <th class="px-4 py-3">Title</th>
-                  <th class="px-4 py-3">Category</th>
-                  <th class="px-4 py-3">Price</th>
-                  <th class="px-4 py-3">Discount</th>
-                  <th class="px-4 py-3 text-green-400">Total</th>
-                  <th class="px-4 py-3 text-center">Actions</th>
+                  <th class="px-6 py-4">ID</th>
+                  <th class="px-6 py-4">Title</th>
+                  <th class="px-6 py-4">Category</th>
+                  <th class="px-6 py-4">Price</th>
+                  <th class="px-6 py-4">Discount</th>
+                  <th class="px-6 py-4 text-emerald-400">Total</th>
+                  <th class="px-6 py-4 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody class="table-body divide-y divide-gray-700"></tbody>
+              <tbody class="table-body divide-y divide-gray-800 bg-[#1e293b]/50"></tbody>
             </table>
           </div>
 
-          <!--=================== MOBILE ACCORDION ===================-->
-          <div
-            class="md:hidden space-y-4 p-4 text-lg font-semibold bg-gray-800 text-gray-200 rounded-t-xl shadow-lg text-center"
-          >
-            Products Dashboard
-          </div>
-          <div class="mobile-body md:hidden space-y-4"></div>
+          <!-- Mobile View -->
+          <div class="mobile-body md:hidden space-y-3 p-2"></div>
         </div>
       </section>
     </div>
-    <script src="app.js" defer></script>
+
+    <script src="app.js"></script>
   </body>
 </html>
