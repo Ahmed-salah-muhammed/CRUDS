@@ -12,47 +12,47 @@ let create = document.getElementById("create");
 const notifications = document.getElementById("notifications");
 
 const toastDetails = {
-    timer: 5000,
-    success: {
-        icon: 'fa-circle-check',
-        title: 'Success',
-        color: 'bg-emerald-500',
-        glow: 'shadow-emerald-500/20',
-        iconBg: 'bg-emerald-500/10',
-        iconColor: 'text-emerald-500'
-    },
-    error: {
-        icon: 'fa-circle-exclamation',
-        title: 'Error',
-        color: 'bg-red-500',
-        glow: 'shadow-red-500/20',
-        iconBg: 'bg-red-500/10',
-        iconColor: 'text-red-500'
-    },
-    warning: {
-        icon: 'fa-triangle-exclamation',
-        title: 'Warning',
-        color: 'bg-amber-500',
-        glow: 'shadow-amber-500/20',
-        iconBg: 'bg-amber-500/10',
-        iconColor: 'text-amber-500'
-    },
-    info: {
-        icon: 'fa-circle-info',
-        title: 'Info',
-        color: 'bg-blue-500',
-        glow: 'shadow-blue-500/20',
-        iconBg: 'bg-blue-500/10',
-        iconColor: 'text-blue-500'
-    }
+  timer: 5000,
+  success: {
+    icon: 'fa-circle-check',
+    title: 'Success',
+    color: 'bg-emerald-500',
+    glow: 'shadow-emerald-500/20',
+    iconBg: 'bg-emerald-500/10',
+    iconColor: 'text-emerald-500'
+  },
+  error: {
+    icon: 'fa-circle-exclamation',
+    title: 'Error',
+    color: 'bg-red-500',
+    glow: 'shadow-red-500/20',
+    iconBg: 'bg-red-500/10',
+    iconColor: 'text-red-500'
+  },
+  warning: {
+    icon: 'fa-triangle-exclamation',
+    title: 'Warning',
+    color: 'bg-amber-500',
+    glow: 'shadow-amber-500/20',
+    iconBg: 'bg-amber-500/10',
+    iconColor: 'text-amber-500'
+  },
+  info: {
+    icon: 'fa-circle-info',
+    title: 'Info',
+    color: 'bg-blue-500',
+    glow: 'shadow-blue-500/20',
+    iconBg: 'bg-blue-500/10',
+    iconColor: 'text-blue-500'
+  }
 }
 
 function showToast(type, message = "") {
-    const { icon, title, color, glow, iconBg, iconColor } = toastDetails[type];
-    const toast = document.createElement("li");
-    toast.className = `toast animate-show pointer-events-auto relative flex items-center w-[340px] p-4 bg-[#1e293b] border border-gray-800 rounded-xl shadow-2xl ${glow} overflow-hidden list-none`;
-    
-    toast.innerHTML = `
+  const { icon, title, color, glow, iconBg, iconColor } = toastDetails[type];
+  const toast = document.createElement("li");
+  toast.className = `toast animate-show pointer-events-auto relative flex items-center w-[340px] p-4 bg-[#1e293b] border border-gray-800 rounded-xl shadow-2xl ${glow} overflow-hidden list-none`;
+
+  toast.innerHTML = `
         <div class="flex items-start gap-4 w-full">
             <div class="${iconBg} p-2 rounded-lg flex items-center justify-center">
                 <i class="fa-solid ${icon} ${iconColor} text-xl"></i>
@@ -67,15 +67,15 @@ function showToast(type, message = "") {
         </div>
         <div class="absolute bottom-0 left-0 h-1 w-full ${color} toast-progress shadow-lg"></div>
     `;
-    
-    notifications.appendChild(toast);
-    toast.timeoutId = setTimeout(() => removeToast(toast), toastDetails.timer);
+
+  notifications.appendChild(toast);
+  toast.timeoutId = setTimeout(() => removeToast(toast), toastDetails.timer);
 }
 
 function removeToast(toast) {
-    toast.classList.add("animate-hide");
-    if(toast.timeoutId) clearTimeout(toast.timeoutId);
-    setTimeout(() => toast.remove(), 400);
+  toast.classList.add("animate-hide");
+  if (toast.timeoutId) clearTimeout(toast.timeoutId);
+  setTimeout(() => toast.remove(), 400);
 }
 // =====================================================
 
@@ -103,8 +103,8 @@ localStorage.getItem("product") != null ? dataPro = JSON.parse(localStorage.getI
 
 create.onclick = function () {
   if (title.value == "" || price.value == "" || category.value == "") {
-      showToast("error", "Please fill in all required fields to create a product.");
-      return;
+    showToast("error", "Please fill in all required fields to create a product.");
+    return;
   }
 
   let newpro = {
@@ -145,7 +145,7 @@ function cleaninputs() {
   getTotal();
 }
 
-function readData() {
+function readData(data = dataPro) {
   let tableHTML = "";
   let mobileHTML = "";
 
@@ -197,12 +197,12 @@ function readData() {
     deleteAllbtn.onclick = () => {
       showToast("warning", "Are you sure? This will wipe all data.");
       setTimeout(() => {
-          if(confirm("Confirm deletion of all products?")) {
-              dataPro = [];
-              localStorage.setItem("product", JSON.stringify(dataPro));
-              readData();
-              showToast("info", "Database has been cleared.");
-          }
+        if (confirm("Confirm deletion of all products?")) {
+          dataPro = [];
+          localStorage.setItem("product", JSON.stringify(dataPro));
+          readData();
+          showToast("info", "Database has been cleared.");
+        }
       }, 100);
     }
   } else {
@@ -222,7 +222,7 @@ function deleteProduct(i) {
 function updateProduct(i, source = "desktop") {
   let product = dataPro[i];
   showToast("info", `Now editing: ${product.title}`);
-  
+
   if (source === "desktop") {
     let row = document.querySelectorAll(".table-body tr")[i];
     row.children[1].innerHTML = `<input type="text" value="${product.title}" class="w-full p-1 bg-[#0f172a] border border-gray-700 rounded text-xs outline-none focus:border-blue-500">`;
@@ -271,3 +271,50 @@ function saveProduct(i, source = "desktop") {
   readData();
   showToast("success", "Changes saved successfully.");
 }
+
+//search by
+
+let searchMood = "title";
+
+function getSearchMood(id) {
+  let searchInput = document.getElementById("Search");
+
+  if (id === "SearchByTitle") {
+    searchMood = "title";
+    searchInput.placeholder = "Search by title";
+  } else {
+    searchMood = "category";
+    searchInput.placeholder = "Search by category";
+  }
+
+  searchInput.value = "";
+  searchInput.focus();
+}
+
+let searchInput = document.getElementById("Search");
+
+searchInput.onkeyup = function () {
+  let rows = document.querySelectorAll(".table-body tr");
+  let mobileCards = document.querySelectorAll(".mobile-body > div");
+
+  for (let i = 0; i < dataPro.length; i++) {
+    let value = searchInput.value.toLowerCase();
+
+    let target =
+      searchMood === "title"
+        ? dataPro[i].title
+        : dataPro[i].category;
+    if (searchInput.value === "") {
+      rows[i].classList.remove("hidden");
+      mobileCards[i].classList.remove("hidden");
+      continue;
+    }
+    else if (target.toLowerCase().includes(value)) {
+      rows[i].classList.remove("hidden");
+      mobileCards[i].classList.remove("hidden");
+    } else {
+      rows[i].classList.add("hidden");
+      mobileCards[i].classList.add("hidden");
+    }
+  }
+};
