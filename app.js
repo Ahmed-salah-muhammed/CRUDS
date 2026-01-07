@@ -92,6 +92,15 @@ function getTotal() {
   }
 }
 
+discount.oninput = () => {
+  if (+discount.value > +price.value) {
+    showToast("error", "Discount cannot be greater than price");
+    discount.value = "";
+    return;
+  }
+};
+
+
 function capitalizeFirst(str) {
   if (!str) return "";
   str = str.toLowerCase();
@@ -211,17 +220,17 @@ function readData(data = dataPro) {
 }
 readData();
 
+
 function deleteProduct(i) {
   let name = dataPro[i].title;
   dataPro.splice(i, 1);
   localStorage.product = JSON.stringify(dataPro);
   readData();
-  showToast("error", `Removed ${name} from the list.`);
+  showToast("info", `Removed ${name} from the list.`);
 }
 
 function updateProduct(i, source = "desktop") {
   let product = dataPro[i];
-  showToast("info", `Now editing: ${product.title}`);
 
   if (source === "desktop") {
     let row = document.querySelectorAll(".table-body tr")[i];
@@ -254,22 +263,33 @@ function updateProduct(i, source = "desktop") {
 
 function saveProduct(i, source = "desktop") {
   let product = dataPro[i];
+  let priceValue, discountValue;
+
   if (source === "desktop") {
     let row = document.querySelectorAll(".table-body tr")[i];
     product.title = row.children[1].querySelector("input").value;
     product.category = row.children[2].querySelector("input").value;
-    product.price = +row.children[3].querySelector("input").value;
-    product.discount = +row.children[4].querySelector("input").value;
+    priceValue = +row.children[3].querySelector("input").value;
+    discountValue = +row.children[4].querySelector("input").value;
   } else if (source === "mobile") {
     product.title = document.getElementById(`mobile-title-${i}`).value;
     product.category = document.getElementById(`mobile-category-${i}`).value;
-    product.price = +document.getElementById(`mobile-price-${i}`).value;
-    product.discount = +document.getElementById(`mobile-discount-${i}`).value;
+    priceValue = +document.getElementById(`mobile-price-${i}`).value;
+    discountValue = +document.getElementById(`mobile-discount-${i}`).value;
   }
+
+  if (discountValue > priceValue) {
+    showToast("error", "Discount cannot be greater than price");
+    return;
+  }
+
+  product.price = priceValue;
+  product.discount = discountValue;
   product.total = `${product.price - product.discount} L.E`;
+
   localStorage.setItem("product", JSON.stringify(dataPro));
   readData();
-  showToast("success", "Changes saved successfully.");
+  showToast("success", "Changes saved successfully");
 }
 
 //search by
@@ -278,15 +298,20 @@ let searchMood = "title";
 
 function getSearchMood(id) {
   let searchInput = document.getElementById("Search");
+  let searchByTitle = document.getElementById("SearchByTitle");
+  let searchByCategory = document.getElementById("SearchByCategory");
 
   if (id === "SearchByTitle") {
     searchMood = "title";
     searchInput.placeholder = "Search by title";
+    searchByTitle.classList.add("bg-emerald-600/10", "text-emerald-400");
+    searchByCategory.classList.remove("bg-emerald-600/10", "text-emerald-400");
   } else {
     searchMood = "category";
     searchInput.placeholder = "Search by category";
+    searchByCategory.classList.add("bg-emerald-600/10", "text-emerald-400");
+    searchByTitle.classList.remove("bg-emerald-600/10", "text-emerald-400");
   }
-
   searchInput.value = "";
   searchInput.focus();
 }
